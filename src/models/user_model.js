@@ -7,6 +7,7 @@ export default [{
   imgUrl: 'https://picsum.photos/seed/id3/100/100',
   hasAccount: true,
   gender: 'F',
+  fontStyle: ['B'],
 },
 {
   id: '4',
@@ -15,6 +16,7 @@ export default [{
   imgUrl: 'https://picsum.photos/seed/id4/100/100',
   hasAccount: false,
   gender: '',
+  fontStyle: ['B', 'I'],
 },
 {
   id: '5',
@@ -23,5 +25,6 @@ export default [{
   imgUrl: 'https://picsum.photos/seed/id5/100/100',
   hasAccount: true,
   gender: 'F',
+  fontStyle: [],
 },
 ];

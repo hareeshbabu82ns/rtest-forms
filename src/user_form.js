@@ -26,7 +26,9 @@ import {
   useParams,
 } from "react-router-dom";
 
-import useForm from 'react-hook-form'
+// import useForm from 'react-hook-form'
+import { useFormik } from 'formik'
+
 import moment from 'moment';
 const genderOptions = [
   { key: 'F', value: 'F', text: 'Female' },
@@ -44,57 +46,38 @@ function UserForm(props) {
 
   const { currentUser } = props;
 
-  const [user, setUser] = useState(currentUser);
-
-  const { register, handleSubmit, setValue, errors, reset } = useForm({
-    defaultValues: { ...user },
-    validationSchema
+  const onSubmit = data => {
+    console.log(JSON.stringify(data, null, 2));
+  };
+  const { handleSubmit, handleChange, values, errors, handleReset, setFieldValue } = useFormik({
+    initialValues: { ...currentUser },
+    validationSchema,
+    onSubmit,
   });
-
   const snackbar = useSnackbar();
-  console.log(errors);
-  Object.keys(errors).forEach((key) => {
-    snackbar.enqueueSnackbar(errors[key].message, { variant: 'error' })
+  useEffect(() => {
+    console.log(errors);
+    Object.keys(errors).forEach((key) => {
+      snackbar.enqueueSnackbar(errors[key], { variant: 'error' })
+    })
   })
 
-  useEffect(() => {
-    register({ name: "gender" })
-    register({ name: "dob", required: true })
-    register({ name: "hasAccount" })
-  }, [register])
-
-  const handleFieldChange = event => {
-    // console.log(event)
-    let { name, value, type, checked = false } = _.get(event, 'target', event);
-    if (type && type === 'checkbox')
-      value = checked;
-    if (type && type === 'momentDate') {
-      if (value)
-        value = value.valueOf();
-    }
-    console.log(`${name}:${value}`)
-    setValue(name, value)
-    setUser({ ...user, [name]: value })
-  }
-
-  const onSubmit = data => {
-    console.log(JSON.stringify(data, null));
-  };
 
   return (
     <React.Fragment>
       <MuiPickersUtilsProvider utils={DateMomentUtils}>
-        <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate autoComplete="off" onSubmit={handleSubmit}>
           <Grid container spacing={3} >
             <Grid item xs={12}>
               <TextField
-                error={_.isObject(errors.name)}
+                error={!_.isEmpty(errors.name)}
                 fullWidth
                 name="name"
                 label="Name"
                 placeholder="Enter Name"
                 variant="outlined"
-                inputRef={register}
+                onChange={handleChange}
+                value={values.name}
                 InputLabelProps={{
                   shrink: true,
                 }} />
@@ -110,22 +93,23 @@ function UserForm(props) {
                 id="dob"
                 name="dob"
                 label="Date of Birth"
-                value={user.dob}
-                onChange={(date, value) => handleFieldChange({ name: 'dob', type: 'momentDate', value: date })}
+                value={values.dob}
+                onChange={(date, value) => setFieldValue('dob', date ? date.valueOf() : date)}
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} container alignItems="center">
               <FormControl>
                 <FormControlLabel
-                  fullWidth='true'
+                  fullWidth
                   control={
                     <Switch
+                      id="hasAccount"
                       name="hasAccount"
-                      checked={user.hasAccount}
-                      onChange={handleFieldChange}
+                      checked={values.hasAccount}
+                      onChange={(e, checked) => setFieldValue('hasAccount', checked)}
                     />
                   }
                   label="Has Account"
@@ -141,9 +125,9 @@ function UserForm(props) {
                 label="Gender"
                 margin="normal"
                 variant="outlined"
-                error={_.isObject(errors.gender)}
-                value={user.gender}
-                onChange={handleFieldChange}
+                error={!_.isEmpty(errors.gender)}
+                value={values.gender}
+                onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -157,7 +141,7 @@ function UserForm(props) {
             </Grid>
             <Grid item xs={12} container spacing={3} justify="flex-end">
               <Grid item>
-                <Button color="teal" variant="contained" type="button" onClick={() => reset()}>Reset</Button>
+                <Button color="teal" variant="contained" type="button" onClick={handleReset}>Reset</Button>
               </Grid>
               <Grid item>
                 <Button color="primary" variant="contained" type="submit">Update</Button>

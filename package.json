@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/pickers": "^3.2.7",
     "formik": "^2.0.3",
+    "formik-material-ui": "^1.0.0",
     "history": "^4.10.1",
     "little-state-machine": "^2.9.23",
     "lodash": "^4.17.15",
