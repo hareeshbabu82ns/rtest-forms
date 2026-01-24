@@ -10,7 +10,7 @@
     "formik": "^2.0.3",
     "history": "^4.10.1",
     "little-state-machine": "^2.9.23",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.23",
     "moment": "^2.24.0",
     "notistack": "^0.9.5",
     "react": "^16.11.0",
